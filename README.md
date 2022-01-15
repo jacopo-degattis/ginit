@@ -7,7 +7,7 @@ You can easily launch this utility with the command:
 
 ```bash
 $ ./gget.rb <repo_name>
-```bash
+```
 
 And then do the usual stuff, like branch, add, commit and push !
 
