@@ -19,20 +19,27 @@ def _create_repo(name)
         "description": "Test repo",
         "private": false
     }
-
-    uri = URI.parse("#{API_URI}/user/repos")
+    
     basic_auth = Base64.strict_encode64("#{ENV['git_user']}:#{ENV['git_token']}")
+    headers = {'Authorization': "Basic #{basic_auth}", "Content-Type": "application/json"}
+
+    
+    uri = URI.parse("#{API_URI}/user/repos")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
-    headers = {'Authorization': "Basic #{basic_auth}", "Content-Type": "application/json"}
-    puts headers
+
     request = Net::HTTP::Post.new(uri.request_uri, headers)
     request.body = payload.to_json
 
     response = http.request(request)
 
-    puts response.code
-    
+    case response
+        when Net::HTTPSuccess
+            puts "[!] Created repo #{name}"
+        else
+            puts "ERROR: encountered an error while fetching github api"
+            exit(1)
+    end    
 end
 
 def process_argv(option)
