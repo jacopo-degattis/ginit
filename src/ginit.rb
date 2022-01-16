@@ -2,22 +2,24 @@
 
 require "json"
 require "base64"
+require "optparse"
 require "net/http"
 
+VERSION = "0.1.0"
 API_URI = "https://api.github.com"
 
-def _create_repo(name)
+def _create_repo(name, description = "", priv = true)
     # @name: Name of the repository to be created
 
-    if not ENV['git_token'] or not ENV['git_user']
-        puts "ERROR: missing git_token and/or git_user in ENV variables"
-        exit 1
+    if not name
+        puts "ERROR: repository must have a name"
+        exit(1)
     end
 
     payload = {
         "name": name,
-        "description": "Test repo",
-        "private": false
+        "description": description,
+        "private": priv
     }
     
     basic_auth = Base64.strict_encode64("#{ENV['git_user']}:#{ENV['git_token']}")
@@ -42,13 +44,29 @@ def _create_repo(name)
     end    
 end
 
-def process_argv(option)
-    case option
-        when "--help"
-            puts "TODO: HELP"
-        else
-            _create_repo(option)
-    end
+def _print_help()
+    puts "ginit #{VERSION}\nUtility to clone repo subfolders and files\n\nUSAGE:\n\tginit <repo-name>\n\n"
 end
 
-ARGV.each { |option| process_argv(option) }
+options = OpenStruct.new
+OptionParser.new do |opt|
+    opt.on("-n", "--name repo_name", "The repository name") { |o| options.name = o}
+    opt.on("-d", "--description repo_description", "The repository description") { |o| options.description = o}
+    opt.on("-v", "--visibility repo_visibility", "Whether repo is private or public") { |o| options.visibility = o}
+end.parse!
+
+if not ENV['git_token'] or not ENV['git_user']
+    puts "ERROR: missing git_token and/or git_user in ENV variables"
+    exit 1
+end
+
+if not ['private', 'public'].include? options.visibility
+    puts "ERROR: visibility must be either 'public' or 'private'"
+    exit(1)
+end
+
+if options.visibility == 'public'
+    _create_repo(options.name, options.description, false)
+else
+    _create_repo(options.name, options.description, true)
+end
