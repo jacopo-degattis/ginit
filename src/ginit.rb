@@ -60,6 +60,21 @@ if not ENV['git_token'] or not ENV['git_user']
     exit 1
 end
 
+if not options.name
+    print "- Input repository name (default: test): "
+    options.name = gets.chomp
+end
+
+if not options.description
+    print "- Input repository description (default: ''): "
+    options.description = gets.chomp
+end
+
+if not options.visibility
+    print "- Input repository visibility ( public / private ) - (default to private): "
+    options.visibility = gets.chomp
+end
+
 if not ['private', 'public'].include? options.visibility
     puts "ERROR: visibility must be either 'public' or 'private'"
     exit(1)
