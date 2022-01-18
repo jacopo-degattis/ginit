@@ -15,6 +15,8 @@ def _create_local_folder(name)
         system 'git init'
         system 'touch README.md'
         system 'touch LICENSE'
+        system 'git branch -M master'
+        system "git remote add origin https://github.com/#{ENV['git_user']}/#{name}"
         system 'git add .; git commit -S -m "Initial commit"'
     end
     
