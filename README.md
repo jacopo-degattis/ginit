@@ -18,7 +18,11 @@ $ ./gget.rb <repo_name>
 | -d        | Repo description |            |
 | -v        | Repo visibility  | true/false |
 
-And then do the usual stuff, like branch, add, commit and push !
+~~And then do the usual stuff, like branch, add, commit and push !~~
+
+> When you create a remote repository, this script will automatically initialize
+> an empty local repository, an initial commit, REAMDE / LICENSE files and will set the remote
+> repository that has just been created as target.
 
 ## Author
 
