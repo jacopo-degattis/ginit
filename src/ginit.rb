@@ -8,6 +8,18 @@ require "net/http"
 VERSION = "0.1.0"
 API_URI = "https://api.github.com"
 
+def _create_local_folder(name)
+    if !File.exists?(name)
+        Dir.mkdir(name)
+        Dir.chdir("./#{name}")
+        system 'git init'
+        system 'touch README.md'
+        system 'touch LICENSE'
+        system 'git add .; git commit -S -m "Initial commit"'
+    end
+    
+end
+
 def _create_repo(name, description = "", priv = true)
     # @name: Name of the repository to be created
 
@@ -38,6 +50,7 @@ def _create_repo(name, description = "", priv = true)
     case response
         when Net::HTTPSuccess
             puts "[!] Created repo #{name}"
+            _create_local_folder(name)
         else
             puts "ERROR: encountered an error while fetching github api"
             exit(1)
